@@ -5,7 +5,7 @@ const { connectDB, closeDB } = require('./config/database.config');
 const http = require('http');
 const logger = require('./config/logger.config');
 
-dotenv.config();
+dotenv.config({ path: '.env' });
 
 const startServer = async () => {
   try {

@@ -9,8 +9,8 @@ const logger = require('./config/logger.config');
 const rateLimit = require('express-rate-limit');
 const errorHandler = require('./middlewares/error.middleware');
 const mongoose = require('mongoose');
-const AppError = require("./utils/AppError");
-const routes = require("./routes/index"); 
+const AppError = require('./utils/AppError');
+const routes = require('./routes/index');
 
 const app = express();
 
@@ -105,13 +105,8 @@ app.get('/', (req, res) => {
 });
 
 //not found middlware for unknown routes
-app.use((req,res,next) => {
-  next(
-    new AppError(
-      `Route ${req.originalUrl} not found`,
-      404
-    )
-  );
+app.use((req, res, next) => {
+  next(new AppError(`Route ${req.originalUrl} not found`, 404));
 });
 app.use(errorHandler);
 

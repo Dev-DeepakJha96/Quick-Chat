@@ -1,11 +1,24 @@
 const dotenv = require('dotenv');
+const AppError = require('../utils/AppError');
 dotenv.config();
 
-const requiredVars = ['NODE_ENV', 'CLIENT_URL', 'MONGODB_URI', 'JWT_SECRET'];
+const requiredVars = [
+  'NODE_ENV',
+  'CLIENT_URL',
+  'MONGODB_URI',
+  'JWT_ACCESS_SECRET',
+  'JWT_REFRESH_SECRET',
+  'JWT_ACCESS_EXPIRY',
+  'JWT_REFRESH_EXPIRY',
+  'EMAIL_HOST',
+  'EMAIL_PORT',
+  'EMAIL_USER',
+  'EMAIL_PASS',
+];
 
 requiredVars.forEach((envVar) => {
   if (!process.env[envVar]) {
-    throw new Error(`Enviournment variable ${envVar} is missing!`);
+    throw new AppError(`Environment variable ${envVar} is missing!`);
   }
 });
 
@@ -17,18 +30,18 @@ const config = {
 
   server: {
     port: parseInt(process.env.PORT, 10) || 5000,
-    host: process.env.HOST || 'localhost',
+    host: process.env.HOST,
     clientUrls: process.env.CLIENT_URL.split(',').map((url) => url.trim()),
   },
 
   database: {
     uri: process.env.MONGODB_URI,
   },
-
   jwt: {
-    secret: process.env.JWT_SECRET,
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
-    cookieExpiresIn: parseInt(process.env.JWT_COOKIE_EXPIRES_IN, 10) || 7,
+    accessSecret: process.env.JWT_ACCESS_SECRET,
+    refreshSecret: process.env.JWT_REFRESH_SECRET,
+    accessExpiry: process.env.JWT_ACCESS_EXPIRY,
+    refreshExpiry: process.env.JWT_REFRESH_EXPIRY,
   },
   logging: {
     level: process.env.LOG_LEVEL || 'info',
@@ -38,6 +51,12 @@ const config = {
     rateLimitWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 900000,
     rateLimitMaxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS, 10) || 100,
     bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS, 10) || 12,
+  },
+  email: {
+    emailHost: process.env.EMAIL_HOST,
+    emailPort: parseInt(process.env.EMAIL_PORT, 10),
+    emailUser: process.env.EMAIL_USER,
+    emailPass: process.env.EMAIL_PASS,
   },
 };
 
