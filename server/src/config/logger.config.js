@@ -72,12 +72,6 @@ const logger = winston.createLogger({
   exitOnError: false,
 });
 
-// Helper methods for common log patterns
-logger.debug = (message, meta) => logger.log('debug', message, meta);
-logger.info = (message, meta) => logger.log('info', message, meta);
-logger.warn = (message, meta) => logger.log('warn', message, meta);
-logger.error = (message, meta) => logger.log('error', message, meta);
-
 // Log unhandled rejections
 process.on('unhandledRejection', (reason, promise) => {
   logger.error('Unhandled Rejection at:', { promise, reason });

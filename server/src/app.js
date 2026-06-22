@@ -56,6 +56,7 @@ if (config.isProduction) {
     logger.info(`${req.method} ${req.url}`, {
       ip: req.ip,
       userAgent: req.get('user-agent'),
+      requestId: req.requestId,
     });
     next();
   });

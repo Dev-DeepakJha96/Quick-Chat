@@ -2,6 +2,7 @@ const User = require('../models/User');
 const { hashToken, generateRandomToken } = require('../utils/crypto');
 const { signAccessToken, signRefreshToken } = require('../utils/jwt');
 const AppError = require('../utils/AppError');
+const logger = require('../config/logger.config');
 const { sendEmail } = require('./email/sendmail');
 const {
   emailVerificationTemplate,
@@ -22,6 +23,8 @@ exports.registerUser = async ({ name, email, password }) => {
     emailVerificationToken: hashedToken,
     emailVerificationExpires: Date.now() + 10 * 60 * 1000,
   });
+
+  logger.info(`User created: ${email}`);
 
   sendEmail({
     to: email,
@@ -46,6 +49,7 @@ exports.verifyEmail = async (token) => {
   user.emailVerificationExpires = undefined;
   await user.save();
 
+  logger.info(`Email verified for user: ${user._id}`);
   return user;
 };
 
@@ -63,6 +67,7 @@ exports.loginUser = async ({ email, password }) => {
   user.refreshToken = hashToken(refreshToken);
   await user.save();
 
+  logger.info(`User logged in: ${user.email}`);
   return { user, accessToken, refreshToken };
 };
 
@@ -88,6 +93,7 @@ exports.refreshUserToken = async (refreshToken) => {
   user.refreshToken = hashToken(newRefreshToken);
   await user.save();
 
+  logger.info(`Token refreshed for user: ${user._id}`);
   return { user, accessToken: newAccessToken, refreshToken: newRefreshToken };
 };
 
@@ -97,6 +103,7 @@ exports.logoutUser = async (userId) => {
     user.refreshToken = undefined;
     await user.save();
   }
+  logger.info(`User logged out: ${userId}`);
   return true;
 };
 
@@ -133,6 +140,7 @@ exports.forgotPassword = async (email) => {
     html: resetPasswordTemplate(resetToken),
   });
 
+  logger.info(`Password reset token generated for: ${email}`);
   return resetToken;
 };
 
@@ -152,5 +160,6 @@ exports.resetPassword = async (token, newPassword) => {
   user.refreshToken = undefined;
   await user.save();
 
+  logger.info(`Password reset completed`);
   return true;
 };

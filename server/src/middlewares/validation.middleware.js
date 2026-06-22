@@ -8,7 +8,6 @@ const validate = (schema, source = 'body') => {
 
       next();
     } catch (error) {
-      logger.error('Validation Error', error);
 
       const errors =
         error?.issues?.map((e) => ({
@@ -16,7 +15,11 @@ const validate = (schema, source = 'body') => {
           message: e.message,
         })) || [];
 
-      next(new AppError('Validation failed', 400));
+      logger.error('Validation Error',{
+        issues: errors, 
+        requestId: req.requestId, 
+      });
+      next(new AppError('Validation failed', 400,errors));
     }
   };
 };

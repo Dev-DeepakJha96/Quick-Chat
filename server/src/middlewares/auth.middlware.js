@@ -2,11 +2,11 @@ const User = require('../models/User');
 const asyncHandler = require('../utils/asyncHanlder');
 const { verifyAccessToken } = require('../utils/jwt');
 const AppError = require('../utils/AppError');
+const logger = require('../config/logger.config');
 
 const protect = asyncHandler(async (req, res, next) => {
   let token;
 
-  // 1. Get token
   if (req.cookies?.accessToken) {
     token = req.cookies.accessToken;
   } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -14,25 +14,26 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 
   if (!token) {
+    logger.warn('Auth: No token provided', { requestId: req.requestId, ip: req.ip });
     return next(new AppError('You are not logged in! Please log in to get access.', 401));
   }
 
-  // 2. Verify token
   let decoded;
   try {
     decoded = verifyAccessToken(token);
   } catch (error) {
+    logger.warn('Auth: Invalid or expired token', { requestId: req.requestId, ip: req.ip });
     return next(new AppError('Invalid or expired token.', 401));
   }
 
-  // 3. Find user
   const user = await User.findById(decoded.sub);
   if (!user) {
+    logger.warn('Auth: User from token no longer exists', { requestId: req.requestId, userId: decoded.sub });
     return next(new AppError('The user belonging to this token no longer exists.', 401));
   }
 
-  // 4. Password change check
   if (user.changedPasswordAfter && user.changedPasswordAfter(decoded.iat)) {
+    logger.warn('Auth: Password recently changed, re-login required', { requestId: req.requestId, userId: user._id });
     return next(new AppError('Password recently changed. Please login again.', 401));
   }
 

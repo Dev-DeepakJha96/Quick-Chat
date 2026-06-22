@@ -15,6 +15,7 @@ const errorHandler = (err, req, res, next) => {
     stack: err.stack,
     url: req.originalUrl,
     method: req.method,
+    requestId: req.requestId,
   });
 
   let error = err;
@@ -41,13 +42,7 @@ const errorHandler = (err, req, res, next) => {
     error = new AppError('Your token has expired. Please log in again.', 401);
   }
 
-  if (error.name === 'ValidationError') {
-    const errors = Object.values(err.errors).map((e) => ({
-      field: e.path,
-      message: e.message,
-    }));
-    error = new AppError('Validation failed', 400, errors);
-  }
+
 
   // development response
   if (config.isDevelopment) {
@@ -68,9 +63,6 @@ const errorHandler = (err, req, res, next) => {
       errors: error.errors,
     });
   }
-
-  // fallback (unknown error)
-  logger.error('Unexpected Error:', err);
 
   return res.status(500).json({
     status: 'error',
