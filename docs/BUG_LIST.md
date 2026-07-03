@@ -53,7 +53,7 @@
 | **Root Cause** | Developer forgot the nested `.data` from `ApiResponse.success()`. |
 | **Affected Files** | `ChatContext.jsx:59` |
 | **Priority** | Critical |
-| **Status** | Pending |
+| **Status** | Done — 2026-07-03 |
 | **Fix** | Change `response.data.pagination` → `response.data.data.pagination`. |
 
 ---

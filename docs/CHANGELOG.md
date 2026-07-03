@@ -16,6 +16,19 @@
 
 ---
 
+## [Phase 1, C4] — 2026-07-03
+
+### Fixed: C4 — Pagination response path missing `.data`
+
+**Problem:** `ChatContext.jsx:59` read `response.data.pagination`. Backend wraps pagination inside ApiResponse's `data` envelope. Correct path is `response.data.data.pagination`.
+
+**Change:** One-line fix with `|| {}` fallback.
+
+**Files Modified:**
+- `client/src/context/ChatContext.jsx` — line 59
+
+---
+
 ## [Phase 1, C3] — 2026-07-03
 
 ### Fixed: C3 — Socket token cookie lookup mismatch

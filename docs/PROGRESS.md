@@ -26,10 +26,10 @@
 | 1.1 | Fix `_id` → `id` transform in models | Done | ✅ |
 | 1.2 | Add `GET /users/search` backend route | Done | ✅ |
 | 1.3 | Fix socket token cookie lookup | Done | ✅ |
-| 1.4 | Fix pagination response path | Pending | — |
+| 1.4 | Fix pagination response path | Done | ✅ |
 | 1.5 | Fix `npm start` path | Pending | — |
 
-**Phase 1 Total:** 3 / 5
+**Phase 1 Total:** 4 / 5
 
 ---
 

@@ -56,7 +56,7 @@ export const ChatProvider = ({ children }) => {
       const response = await api.get(url);
       
       const newMessages = response.data.data.messages || [];
-      const { hasMore, nextBefore: next } = response.data.pagination;
+      const { hasMore, nextBefore: next } = response.data.data.pagination || {};
       
       if (before) {
         // Loading older messages (append to beginning)
