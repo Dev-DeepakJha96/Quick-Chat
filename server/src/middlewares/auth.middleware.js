@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const asyncHandler = require('../utils/asyncHanlder');
+const asyncHandler = require('../utils/asyncHandler');
 const { verifyAccessToken } = require('../utils/jwt');
 const AppError = require('../utils/AppError');
 const logger = require('../config/logger.config');

@@ -5,7 +5,7 @@ const router = express.Router();
 const conversationController = require('../controllers/conversation.controller');
 
 // Middleware
-const { protect } = require('../middlewares/auth.middlware');
+const { protect } = require('../middlewares/auth.middleware');
 const { validate } = require('../middlewares/validation.middleware');
 const conversationValidation = require('../validators/conversation.validation');
 

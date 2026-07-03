@@ -1,5 +1,5 @@
 const authService = require('../services/auth.services');
-const asyncHandler = require('../utils/asyncHanlder');
+const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/ApiResponse');
 const config = require('../config/env.config');
 const logger = require('../config/logger.config');

@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const asyncHandler = require('../utils/asyncHanlder');
+const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/ApiResponse');
 
 exports.searchUsers = asyncHandler(async (req, res) => {

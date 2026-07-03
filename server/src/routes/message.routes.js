@@ -5,7 +5,7 @@ const router = express.Router();
 const messageController = require('../controllers/message.controller');
 
 // Middleware
-const { protect } = require('../middlewares/auth.middlware');
+const { protect } = require('../middlewares/auth.middleware');
 const { validate } = require('../middlewares/validation.middleware');
 const messageValidation = require('../validators/message.validation');
 

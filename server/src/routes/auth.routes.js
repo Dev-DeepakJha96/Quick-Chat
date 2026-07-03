@@ -8,7 +8,7 @@ const {
   verifyEmailSchema,
   changePasswordSchema,
 } = require('../validators/auth.validator');
-const { protect } = require('../middlewares/auth.middlware');
+const { protect } = require('../middlewares/auth.middleware');
 const authController = require('../controllers/auth.controller');
 
 const router = express.Router();
