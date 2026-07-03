@@ -130,19 +130,4 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   return false;
 };
 
-userSchema.methods.getPublicProfile = function () {
-  const user = this.toObject();
-  delete user.password;
-  delete user.refreshToken;
-  delete user.resetPasswordToken;
-  delete user.emailVerificationToken;
-  return user;
-};
-
-userSchema.statics.findByIdentifier = function (identifier) {
-  return this.findOne({
-    $or: [{ email: identifier.toLowerCase() }, { username: identifier.toLowerCase() }],
-  });
-};
-
 module.exports = mongoose.model('User', userSchema);

@@ -76,15 +76,6 @@ conversationSchema.pre('save', function (next) {
   next();
 });
 
-conversationSchema.methods.isParticipant = function (userId) {
-  return this.participants.some((participant) => participant.toString() === userId.toString());
-};
-
-conversationSchema.methods.getOtherParticipant = function (userId) {
-  if (this.participants.length !== 2) return null;
-  return this.participants.find((participant) => participant.toString() !== userId.toString());
-};
-
 conversationSchema.statics.findOrCreate = async function (user1Id, user2Id) {
   const participants = [user1Id, user2Id].sort();
 

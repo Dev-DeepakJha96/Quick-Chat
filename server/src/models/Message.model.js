@@ -126,24 +126,11 @@ messageSchema.pre('save', async function (next) {
   next();
 });
 
-messageSchema.methods.isReadBy = function (userId) {
-  return this.readBy.some((read) => read.user.toString() === userId.toString());
-};
-
 messageSchema.methods.markAsRead = async function (userId) {
   const userIdStr = userId.toString();
   const alreadyRead = this.readBy.some((read) => read.user.toString() === userIdStr);
   if (!alreadyRead) {
     this.readBy.push({ user: userId, readAt: new Date() });
-    await this.save();
-  }
-  return this;
-};
-
-messageSchema.methods.markAsDelivered = async function (userId) {
-  const userIdStr = userId.toString();
-  if (!this.deliveredTo.some((id) => id.toString() === userIdStr)) {
-    this.deliveredTo.push(userId);
     await this.save();
   }
   return this;
@@ -205,18 +192,6 @@ messageSchema.statics.markAllAsRead = async function (conversationId, userId) {
     }
   );
   return { updatedCount: result.modifiedCount };
-};
-
-messageSchema.statics.searchMessages = async function (query, options = {}) {
-  const { limit = 20, userId = null } = options;
-  const searchQuery = { $text: { $search: query }, isDeleted: false };
-  if (userId) searchQuery.deletedFor = { $ne: userId };
-  return this.find(searchQuery)
-    .populate('sender', 'username email avatarColor')
-    .populate('conversation', 'participants')
-    .sort({ score: { $meta: 'textScore' } })
-    .limit(limit)
-    .lean();
 };
 
 const Message = mongoose.model('Message', messageSchema);
