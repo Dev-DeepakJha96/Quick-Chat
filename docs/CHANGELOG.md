@@ -16,6 +16,21 @@
 
 ---
 
+## [Phase 2, H3] — 2026-07-03
+
+### Fixed: H3 — Password validation mismatch
+
+**Problem:** User.js model + RegisterPage/LoginPage frontend validation required 6+ chars, but `auth.validator.js` (Zod) required 8+ chars with complexity rules. Users passed frontend validation but got 400 errors.
+
+**Changes:** Changed all 6 → 8 to match backend validator.
+
+**Files Modified:**
+- `server/src/models/User.js:29`
+- `client/src/pages/RegisterPage.jsx:65`
+- `client/src/pages/LoginPage.jsx:35`
+
+---
+
 ## [Phase 2, H2] — 2026-07-03
 
 ### Fixed: H2 — Missing socket event handlers

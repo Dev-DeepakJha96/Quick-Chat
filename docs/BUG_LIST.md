@@ -103,12 +103,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Description** | Frontend `RegisterPage.jsx:63` requires only 6+ characters. Backend Zod `auth.validator.js:11-16` requires 8+ chars with lowercase, uppercase, number, and special character. |
+| **Description** | Frontend `RegisterPage.jsx:63` required only 6+ characters. Backend Zod `auth.validator.js:11-16` requires 8+ chars with lowercase, uppercase, number, and special character. |
 | **Root Cause** | Inconsistent validation between layers. |
-| **Affected Files** | `RegisterPage.jsx:63`, `auth.validator.js:11-16` |
+| **Affected Files** | `RegisterPage.jsx:63`, `User.js:29`, `LoginPage.jsx:35` |
 | **Priority** | High |
-| **Status** | Pending |
-| **Fix** | Align by either relaxing backend or adding complexity to frontend with clear feedback. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Changed User.js model, RegisterPage.jsx, and LoginPage.jsx from 6→8 to match backend Zod validator. |
 
 ---
 

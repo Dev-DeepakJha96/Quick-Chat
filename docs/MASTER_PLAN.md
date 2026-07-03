@@ -30,7 +30,7 @@ Full-stack chat application (React + Vite + Tailwind v4 frontend, Express 5 + Mo
 |------|------|-------|------------|---------------------|
 | 2.1 | Fix `updateProfile` endpoint path | `AuthContext.jsx` | None | Profile updates return 200 |
 | 2.2 | Add missing socket event handlers | `socket.config.js` | Phase 1.3 | Typing indicators, read receipts, join room work |
-| 2.3 | Align password validation | `auth.validator.js` or `RegisterPage.jsx` | None | User can register with consistent rules |
+| 2.3 | Align password validation | `User.js:29`, `RegisterPage.jsx:65`, `LoginPage.jsx:35` | None | User can register with consistent rules |
 | 2.4 | Add missing auth routes + pages | `App.jsx`, new page files | None | `/forgot-password`, `/reset-password`, `/verify-email` render |
 
 ---
