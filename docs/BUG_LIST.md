@@ -27,7 +27,7 @@
 | **Root Cause** | Backend route never implemented. |
 | **Affected Files** | Backend: missing `user.routes.js`, `user.controller.js`. Frontend: `ChatContext.jsx:212`. |
 | **Priority** | Critical |
-| **Status** | Pending |
+| **Status** | Done — 2026-07-03 |
 | **Fix** | Create `user.routes.js` with `GET /search`, `user.controller.js` with `searchUsers`, mount in `routes/index.js`. |
 
 ---

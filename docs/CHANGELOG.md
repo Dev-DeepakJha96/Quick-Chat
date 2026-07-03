@@ -16,6 +16,23 @@
 
 ---
 
+## [Phase 1, C2] — 2026-07-03
+
+### Fixed: C2 — No `/users/search` backend route
+
+**Problem:** Frontend calls `GET /users/search?q=...` but no route existed. Only `/auth`, `/conversations`, and `/messages` were mounted.
+
+**Change:** Created user search endpoint with regex-based search on username/email, excluding current user.
+
+**Files Created:**
+- `server/src/controllers/user.controller.js` — `searchUsers` handler
+- `server/src/routes/user.routes.js` — `GET /search` (protected)
+
+**Files Modified:**
+- `server/src/routes/index.js` — mounted `/users` routes
+
+---
+
 ## [Phase 1, C1] — 2026-07-03
 
 ### Fixed: C1 — `_id` deleted by toJSON/toObject transforms
