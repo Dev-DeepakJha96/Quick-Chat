@@ -21,7 +21,7 @@ const tokenSchema = z.string().min(10, 'Invalid token').max(500, 'Invalid token'
 // REGISTER
 // =====================
 const registerSchema = z.object({
-  name: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
+  username: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
 
   email: emailSchema,
 
@@ -60,10 +60,21 @@ const verifyEmailSchema = z.object({
   token: tokenSchema,
 });
 
+const changePasswordSchema = z
+  .object({
+    currentPassword: passwordSchema,
+    newPassword: passwordSchema,
+  })
+  .refine((data) => data.currentPassword !== data.newPassword, {
+    message: 'New password must be different from current password',
+    path: ['newPassword'],
+  });
+
 module.exports = {
   registerSchema,
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
   verifyEmailSchema,
+  changePasswordSchema,
 };

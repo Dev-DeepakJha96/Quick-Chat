@@ -1,8 +1,8 @@
 const config = require('../../../config/env.config');
 
 const emailVerificationTemplate = (token) => {
-  // const link = `${config.server.clientUrls[0]}/verify-email?token=${token}`;
-  const link = `http://localhost:5000/verify-email?token=${token}`;
+  const link = `${config.server.clientUrls[0]}/verify-email?token=${token}`;
+  // const link = `http://localhost:5000/verify-email?token=${token}`;
 
   return `
     <div>
@@ -14,8 +14,8 @@ const emailVerificationTemplate = (token) => {
   `;
 };
 const resetPasswordTemplate = (token) => {
-  // const link = `${config.server.clientUrls[0]}/reset-password?token=${token}`;
-  const link = `http://localhost:5000/api/v1/auth/reset-password?token=${token}`; //backend ka testing link he
+  const link = `${config.server.clientUrls[0]}/reset-password?token=${token}`;
+  // const link = `http://localhost:5000/api/v1/auth/reset-password?token=${token}`; //backend ka testing link he
 
   return `
     <div>

@@ -35,11 +35,15 @@
     "mongoose": "^9.7.0",
     "morgan": "^1.11.0",
     "nodemailer": "^9.0.1",
+    "socket.io": "^4.8.3",
     "winston": "^3.19.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "jest": "^30.4.2",
+    "mongodb-memory-server": "^11.2.0",
     "nodemon": "^3.1.14",
-    "prettier": "^3.8.4"
+    "prettier": "^3.8.4",
+    "supertest": "^7.2.2"
   }
 }

@@ -42,8 +42,6 @@ const errorHandler = (err, req, res, next) => {
     error = new AppError('Your token has expired. Please log in again.', 401);
   }
 
-
-
   // development response
   if (config.isDevelopment) {
     return res.status(error.statusCode).json({

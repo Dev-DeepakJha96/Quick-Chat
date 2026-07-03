@@ -5,21 +5,27 @@ const config = require('../config/env.config');
 const logger = require('../config/logger.config');
 
 const setAuthCookies = (res, accessToken, refreshToken) => {
-  res.cookie('accessToken', accessToken, {
-    httpOnly: true,
-    secure: config.isProduction,
-    sameSite: 'strict',
-    maxAge: 15 * 60 * 1000,
-  });
-  res.cookie('refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: config.isProduction,
-    sameSite: 'strict',
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-  });
+  if (accessToken !== undefined) {
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: config.isProduction,
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000,
+    });
+  }
+
+  if (refreshToken !== undefined) {
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: config.isProduction,
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+  }
 };
 
 exports.register = asyncHandler(async (req, res) => {
+  console.log(req.body);
   const result = await authService.registerUser(req.body);
   logger.info(`User registered: ${result.user.email}`, { requestId: req.requestId });
   res.status(201).json(ApiResponse.created(result, 'User registered successfully'));
@@ -65,10 +71,17 @@ exports.updateMe = asyncHandler(async (req, res) => {
   res.status(200).json(ApiResponse.success(user, 'Profile updated'));
 });
 
+exports.changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const accessToken = await authService.changePassword(req.user._id, currentPassword, newPassword);
+  setAuthCookies(res, accessToken);
+  res.status(200).json(ApiResponse.success(null, 'password changed successfully'));
+});
+
 exports.forgotPassword = asyncHandler(async (req, res) => {
-  const resetToken = await authService.forgotPassword(req.body.email);
+  await authService.forgotPassword(req.body.email);
   logger.info(`Password reset requested`, { requestId: req.requestId });
-  res.status(200).json(ApiResponse.success({ resetToken }, 'Password reset link sent to email'));
+  res.status(200).json(ApiResponse.success(null, 'Password reset link sent to email'));
 });
 
 exports.resetPassword = asyncHandler(async (req, res) => {

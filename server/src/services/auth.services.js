@@ -9,15 +9,25 @@ const {
   resetPasswordTemplate,
 } = require('./email/templates/auth.template');
 
-exports.registerUser = async ({ name, email, password }) => {
-  const existingUser = await User.findOne({ email });
-  if (existingUser) throw new AppError('User already exists', 400);
+exports.registerUser = async ({ username, email, password }) => {
+  const existingUser = await User.findOne({
+    $or: [{ email: email.toLowerCase() }, { username: username.toLowerCase() }],
+  });
+  if (existingUser) {
+    if (existingUser.email === email.toLowerCase()) {
+      throw new AppError('Email is already registered', 400);
+    }
+
+    if (existingUser.username === username.toLowerCase()) {
+      throw new AppError('Username is already taken', 400);
+    }
+  }
 
   const rawToken = generateRandomToken();
   const hashedToken = hashToken(rawToken);
 
   const user = await User.create({
-    name,
+    username,
     email,
     password,
     emailVerificationToken: hashedToken,
@@ -54,7 +64,7 @@ exports.verifyEmail = async (token) => {
 };
 
 exports.loginUser = async ({ email, password }) => {
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
   if (!user || !(await user.comparePassword(password))) {
     throw new AppError('Invalid credentials', 401);
   }
@@ -65,6 +75,7 @@ exports.loginUser = async ({ email, password }) => {
   const refreshToken = signRefreshToken(user._id);
 
   user.refreshToken = hashToken(refreshToken);
+  user.lastLogin = new Date();
   await user.save();
 
   logger.info(`User logged in: ${user.email}`);
@@ -113,16 +124,68 @@ exports.getUserProfile = async (userId) => {
   return user;
 };
 
-exports.updateUserProfile = async (userId, updateData) => {
-  const user = await User.findByIdAndUpdate(
-    userId,
-    { name: updateData.name },
-    { new: true, runValidators: true }
-  );
-  if (!user) throw new AppError('User not found', 404);
-  return user;
-};
+exports.updateUserProfile = async (userId, updateDataVars) => {
+  const { username, email, avatarColor } = updateDataVars;
 
+  const updateData = {};
+
+  if (username) updateData.username = username.toLowerCase();
+  if (email) updateData.email = email.toLowerCase();
+  if (avatarColor) updateData.avatarColor = avatarColor;
+
+  // If nothing to update
+  if (Object.keys(updateData).length === 0) {
+    throw new AppError('No data provided for update', 400);
+  }
+
+  // Check duplicates
+  if (username || email) {
+    const existingUser = await User.findOne({
+      _id: { $ne: userId },
+      $or: [
+        ...(username ? [{ username: username.toLowerCase() }] : []),
+        ...(email ? [{ email: email.toLowerCase() }] : []),
+      ],
+    });
+
+    if (existingUser) {
+      if (username && existingUser.username === username.toLowerCase()) {
+        throw new AppError('Username is already taken', 400);
+      }
+
+      if (email && existingUser.email === email.toLowerCase()) {
+        throw new AppError('Email is already registered', 400);
+      }
+    }
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!updatedUser) {
+    throw new AppError('User not found', 404);
+  }
+
+  logger.info(`User profile updated: ${updatedUser.username}`);
+
+  return updatedUser;
+};
+exports.changePassword = async (userId, currentPassword, newPassword) => {
+  const user = await User.findById(userId).select('+password');
+
+  if (!(await user.comparePassword(currentPassword))) {
+    throw new AppError('current password is incorrect', 401);
+  }
+
+  user.password = newPassword;
+  await user.save();
+  const accessToken = signAccessToken(userId);
+  logger.info(`Password changed for user: ${user.username}`);
+
+  return accessToken;
+};
 exports.forgotPassword = async (email) => {
   const user = await User.findOne({ email });
   if (!user) return true;

@@ -8,18 +8,17 @@ const validate = (schema, source = 'body') => {
 
       next();
     } catch (error) {
-
       const errors =
         error?.issues?.map((e) => ({
           field: e.path.join('.'),
           message: e.message,
         })) || [];
 
-      logger.error('Validation Error',{
-        issues: errors, 
-        requestId: req.requestId, 
+      logger.error('Validation Error', {
+        issues: errors,
+        requestId: req.requestId,
       });
-      next(new AppError('Validation failed', 400,errors));
+      next(new AppError('Validation failed', 400, errors));
     }
   };
 };

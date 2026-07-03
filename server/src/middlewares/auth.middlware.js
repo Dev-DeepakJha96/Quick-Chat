@@ -28,12 +28,18 @@ const protect = asyncHandler(async (req, res, next) => {
 
   const user = await User.findById(decoded.sub);
   if (!user) {
-    logger.warn('Auth: User from token no longer exists', { requestId: req.requestId, userId: decoded.sub });
+    logger.warn('Auth: User from token no longer exists', {
+      requestId: req.requestId,
+      userId: decoded.sub,
+    });
     return next(new AppError('The user belonging to this token no longer exists.', 401));
   }
 
   if (user.changedPasswordAfter && user.changedPasswordAfter(decoded.iat)) {
-    logger.warn('Auth: Password recently changed, re-login required', { requestId: req.requestId, userId: user._id });
+    logger.warn('Auth: Password recently changed, re-login required', {
+      requestId: req.requestId,
+      userId: user._id,
+    });
     return next(new AppError('Password recently changed. Please login again.', 401));
   }
 
