@@ -16,6 +16,26 @@
 
 ---
 
+## [Phase 2, H4] — 2026-07-03
+
+### Fixed: H4 — Missing auth routes/pages
+
+**Problem:** Frontend had no routes or pages for forgot-password, reset-password, or verify-email. Backend endpoints existed but were unreachable from the UI. The LoginPage "Forgot password?" link pointed to a 404.
+
+**Changes:**
+- Created `ForgotPasswordPage.jsx` — email form, POST to `/auth/forgot-password`, success state
+- Created `ResetPasswordPage.jsx` — extracts `:token` from URL, new password form, POST to `/auth/reset-password`
+- Created `VerifyEmailPage.jsx` — extracts `:token` from URL, auto-submits POST to `/auth/verify-email`, loading/success/error states
+- Added 3 routes to `App.jsx`
+
+**Files Modified:**
+- `client/src/App.jsx` — added imports + 3 `<Route>` entries
+- `client/src/pages/ForgotPasswordPage.jsx` (new)
+- `client/src/pages/ResetPasswordPage.jsx` (new)
+- `client/src/pages/VerifyEmailPage.jsx` (new)
+
+---
+
 ## [Phase 2, H3] — 2026-07-03
 
 ### Fixed: H3 — Password validation mismatch

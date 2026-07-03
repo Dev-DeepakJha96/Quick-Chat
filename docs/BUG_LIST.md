@@ -120,8 +120,8 @@
 | **Root Cause** | Frontend routes never created. |
 | **Affected Files** | `App.jsx` (missing routes), missing page files |
 | **Priority** | High |
-| **Status** | Pending |
-| **Fix** | Add routes and simple form pages for all three. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Created ForgotPasswordPage, ResetPasswordPage, VerifyEmailPage and added routes to App.jsx. |
 
 ---
 

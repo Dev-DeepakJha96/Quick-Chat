@@ -42,9 +42,9 @@
 | 2.1 | Fix `updateProfile` endpoint path | Done | ✅ |
 | 2.2 | Add missing socket event handlers | Done | ✅ |
 | 2.3 | Align password validation | Done | ✅ |
-| 2.4 | Add missing auth routes + pages | Pending | — |
+| 2.4 | Add missing auth routes + pages | Done | ✅ |
 
-**Phase 2 Total:** 0 / 4
+**Phase 2 Total:** 4 / 4 ✅
 
 ---
 
