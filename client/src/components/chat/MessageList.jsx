@@ -74,6 +74,7 @@ const MessageList = () => {
       if (!groups[dateKey]) {
         groups[dateKey] = {
           date: date,
+          dateKey,
           messages: []
         };
       }
