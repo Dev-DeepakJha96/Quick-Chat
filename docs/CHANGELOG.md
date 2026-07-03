@@ -16,6 +16,25 @@
 
 ---
 
+## [Phase 2, H2] — 2026-07-03
+
+### Fixed: H2 — Missing socket event handlers
+
+**Problem:** Frontend emits `typing:start`, `typing:stop`, `message:read`, `conversation:join`, `conversation:leave` and listens for `typing:indicator`, `message:readReceipt`, `messages:read`, `conversation:joined`, `conversations:joined` — but backend had none of these handlers.
+
+**Changes:**
+- `typing:start` handler — tracks typing state per conversation, broadcasts `typing:indicator` to room
+- `typing:stop` handler — clears typing state, broadcasts `typing:indicator { isTyping: false }`
+- `message:read` handler — calls `message.markAsRead()`, emits `message:readReceipt` + `messages:read`
+- `conversation:join` handler — joins socket room, emits `conversation:joined`
+- `conversation:leave` handler — leaves socket room
+- Connection handler — emits `conversations:joined` with initial conversation IDs after joining rooms
+
+**Files Modified:**
+- `server/src/config/socket.config.js`
+
+---
+
 ## [Phase 2, H1] — 2026-07-03
 
 ### Fixed: H1 — `updateProfile` calls wrong endpoint

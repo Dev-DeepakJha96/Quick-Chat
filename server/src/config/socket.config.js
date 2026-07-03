@@ -76,6 +76,8 @@ const initSocket = (server) => {
       .select('_id')
       .then(conversations => {
         conversations.forEach(conv => socket.join(`conversation:${conv._id}`));
+        const conversationIds = conversations.map(c => c._id.toString());
+        socket.emit('conversations:joined', { conversationIds });
       })
       .catch(err => logger.error('Error joining conversation rooms:', err));
 
@@ -101,6 +103,89 @@ const initSocket = (server) => {
       } catch (error) {
         callback({ success: false, error: 'Failed to send' });
       }
+    });
+
+    // ====================
+    // Typing Indicators
+    // ====================
+    socket.on('typing:start', (data) => {
+      const { conversationId } = data;
+      if (!conversationId) return;
+
+      if (!typingUsers.has(conversationId)) {
+        typingUsers.set(conversationId, new Set());
+      }
+      typingUsers.get(conversationId).add(userId);
+
+      socket.to(`conversation:${conversationId}`).emit('typing:indicator', {
+        conversationId,
+        userId,
+        username: socket.user.username,
+        isTyping: true,
+      });
+    });
+
+    socket.on('typing:stop', (data) => {
+      const { conversationId } = data;
+      if (!conversationId) return;
+
+      if (typingUsers.has(conversationId)) {
+        typingUsers.get(conversationId).delete(userId);
+      }
+
+      socket.to(`conversation:${conversationId}`).emit('typing:indicator', {
+        conversationId,
+        userId,
+        username: socket.user.username,
+        isTyping: false,
+      });
+    });
+
+    // ====================
+    // Read Receipts
+    // ====================
+    socket.on('message:read', async (data) => {
+      try {
+        const { conversationId, messageId } = data;
+        if (!conversationId || !messageId) return;
+
+        const message = await Message.findById(messageId);
+        if (!message) return;
+
+        await message.markAsRead(userId);
+
+        io.to(`conversation:${conversationId}`).emit('message:readReceipt', {
+          conversationId,
+          messageId,
+          readBy: userId,
+          readAt: new Date(),
+        });
+
+        io.to(`conversation:${conversationId}`).emit('messages:read', {
+          userId,
+          conversationId,
+        });
+      } catch (error) {
+        logger.error('Error in message:read handler:', error);
+      }
+    });
+
+    // ====================
+    // Room Management
+    // ====================
+    socket.on('conversation:join', (data) => {
+      const { conversationId } = data;
+      if (!conversationId) return;
+
+      socket.join(`conversation:${conversationId}`);
+      socket.emit('conversation:joined', { conversationId });
+    });
+
+    socket.on('conversation:leave', (data) => {
+      const { conversationId } = data;
+      if (!conversationId) return;
+
+      socket.leave(`conversation:${conversationId}`);
     });
 
     // ====================

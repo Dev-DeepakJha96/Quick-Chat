@@ -90,12 +90,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Description** | Frontend emits `typing:start`, `typing:stop`, `message:read`, `conversation:join`. Backend `socket.config.js` only handles `message:send` and `disconnect`. All other events do nothing. |
+| **Description** | Frontend emits `typing:start`, `typing:stop`, `message:read`, `conversation:join`, `conversation:leave`. Backend `socket.config.js` only handled `message:send` and `disconnect`. All other events did nothing. |
 | **Root Cause** | Socket event handlers incomplete. |
-| **Affected Files** | `socket.config.js`, `SocketContext.jsx:208-235` |
+| **Affected Files** | `server/src/config/socket.config.js` |
 | **Priority** | High |
-| **Status** | Pending |
-| **Fix** | Add event handlers for `typing:start`, `typing:stop`, `message:read`, `conversation:join` in `socket.config.js`. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Added handlers for `typing:start`, `typing:stop`, `message:read`, `conversation:join`, `conversation:leave`. Emit `typing:indicator`, `message:readReceipt`, `messages:read`, `conversation:joined`, `conversations:joined`. |
 
 ---
 

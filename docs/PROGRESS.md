@@ -40,7 +40,7 @@
 | # | Task | Status | Verified |
 |---|------|--------|----------|
 | 2.1 | Fix `updateProfile` endpoint path | Done | ✅ |
-| 2.2 | Add missing socket event handlers | Pending | — |
+| 2.2 | Add missing socket event handlers | Done | ✅ |
 | 2.3 | Align password validation | Pending | — |
 | 2.4 | Add missing auth routes + pages | Pending | — |
 
