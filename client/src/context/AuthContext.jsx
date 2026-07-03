@@ -147,7 +147,7 @@ export const AuthProvider = ({ children }) => {
    */
   const updateProfile = async (data) => {
     try {
-      const response = await api.patch('/auth/update-profile', data);
+      const response = await api.patch('/auth/update-me', data);
       
       if (response.data?.data?.user) {
         setUser(response.data.data.user);

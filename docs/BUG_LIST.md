@@ -81,7 +81,7 @@
 | **Root Cause** | Frontend endpoint path doesn't match backend definition. |
 | **Affected Files** | `AuthContext.jsx:143` |
 | **Priority** | High |
-| **Status** | Pending |
+| **Status** | Done — 2026-07-03 |
 | **Fix** | Change `/auth/update-profile` → `/auth/update-me`. |
 
 ---

@@ -16,6 +16,17 @@
 
 ---
 
+## [Phase 2, H1] — 2026-07-03
+
+### Fixed: H1 — `updateProfile` calls wrong endpoint
+
+**Problem:** `AuthContext.jsx` called `/auth/update-profile`. Backend route is `PATCH /auth/update-me`.
+
+**Files Modified:**
+- `client/src/context/AuthContext.jsx:150`
+
+---
+
 ## [Phase 1, C5] — 2026-07-03
 
 ### Fixed: C5 — `npm start` path wrong
