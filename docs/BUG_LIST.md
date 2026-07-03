@@ -132,11 +132,11 @@
 | Field | Value |
 |-------|-------|
 | **Description** | `MessageList.jsx:150` renders `<div key={group.dateKey}>`. The `groupMessagesByDate()` function returns objects with `{ date, messages }` keys only. `dateKey` is undefined → React key warning. |
-| **Root Cause** | Typo: should be `group.date.toISOString()` or the function should include `dateKey`. |
-| **Affected Files** | `MessageList.jsx:150` |
+| **Root Cause** | Typo: should include `dateKey` in the group object. |
+| **Affected Files** | `MessageList.jsx:76` |
 | **Priority** | Medium |
-| **Status** | Pending |
-| **Fix** | Change `group.dateKey` → `group.date.toISOString()`. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Added `dateKey` field to the group object in `groupMessagesByDate()`. |
 
 ---
 
@@ -146,10 +146,10 @@
 |-------|-------|
 | **Description** | `MessageInput.jsx:77` uses `onKeyPress` which is deprecated in React 19. Should use `onKeyDown`. |
 | **Root Cause** | Legacy React event usage. |
-| **Affected Files** | `MessageInput.jsx:77` |
+| **Affected Files** | `MessageInput.jsx:23,77` |
 | **Priority** | Medium |
-| **Status** | Pending |
-| **Fix** | Replace `onKeyPress` with `onKeyDown` and adjust handler accordingly. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Replaced `onKeyPress` with `onKeyDown`, renamed handler `handleKeyPress` → `handleKeyDown`. |
 
 ---
 
@@ -157,25 +157,25 @@
 
 | Field | Value |
 |-------|-------|
-| **Description** | `client/index.html:7` has `<title>vite-project</title>`. |
+| **Description** | `client/index.html:7` had `<title>vite-project</title>`. |
 | **Root Cause** | Never customized after Vite scaffolding. |
 | **Affected Files** | `client/index.html:7` |
 | **Priority** | Medium |
-| **Status** | Pending |
-| **Fix** | Change to `<title>Quick Chat</title>`. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Changed to `<title>Quick Chat</title>`. |
 
 ---
 
-### M4 — Hardcoded localhost URLs in email templates
+### M4 — Email template links use wrong URL format
 
 | Field | Value |
 |-------|-------|
-| **Description** | `auth.template.js:5,18` hardcodes `http://localhost:5000/...` instead of using `config.server.clientUrls[0]` (which is commented out). |
-| **Root Cause** | Developer commented out config-based URLs and hardcoded localhost for testing. |
-| **Affected Files** | `auth.template.js:5,18` |
+| **Description** | Email templates used query params (`?token=...`) but frontend routes use path params (`/verify-email/:token`, `/reset-password/:token`). |
+| **Root Cause** | Link format never updated to match frontend route definition. |
+| **Affected Files** | `auth.template.js:4,17` |
 | **Priority** | Medium |
-| **Status** | Pending |
-| **Fix** | Restore config-based URLs, make localhost fallback for development. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Changed URL format to `/verify-email/${token}` and `/reset-password/${token}`. Removed dead commented-out code. |
 
 ---
 
@@ -183,12 +183,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Description** | `sendmail.js:14` has `tls: { rejectUnauthorized: false }`. Disables TLS certificate validation, allowing MITM attacks on email in production. |
+| **Description** | `sendmail.js:14` had `tls: { rejectUnauthorized: false }`. Disabled TLS certificate validation, allowing MITM attacks on email in production. |
 | **Root Cause** | Added for development convenience, never made conditional. |
 | **Affected Files** | `sendmail.js:14` |
 | **Priority** | Medium |
-| **Status** | Pending |
-| **Fix** | Make conditional: `rejectUnauthorized: config.isProduction ? true : false`. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Made conditional: `rejectUnauthorized: env.isProduction`. |
 
 ---
 
@@ -263,8 +263,8 @@
 
 | Priority | Count | Status |
 |----------|-------|--------|
-| 🔴 Critical | 5 | All Pending |
-| 🟠 High | 4 | All Pending |
-| 🟡 Medium | 5 | All Pending |
+| 🔴 Critical | 5 | All Done ✅ |
+| 🟠 High | 4 | All Done ✅ |
+| 🟡 Medium | 5 | All Done ✅ |
 | 🔵 Low | 5 | All Pending |
-| **Total** | **19** | **0 / 19 Done** |
+| **Total** | **19** | **14 / 19 Done** |

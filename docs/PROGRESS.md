@@ -1,7 +1,7 @@
 # Progress Tracker — Quick-Chat Recovery
 
 > **Status:** In Progress  
-> **Phase:** Pre-Recovery (Documentation)  
+> **Phase:** 3 — Medium (5/5 done)  
 > **Last Updated:** 2026-07-03
 
 ---
@@ -54,13 +54,13 @@
 
 | # | Task | Status | Verified |
 |---|------|--------|----------|
-| 3.1 | Fix `dateKey` React key | Pending | — |
-| 3.2 | Replace deprecated `onKeyPress` | Pending | — |
-| 3.3 | Update `index.html` title | Pending | — |
-| 3.4 | Fix email template URLs | Pending | — |
-| 3.5 | Make TLS conditional | Pending | — |
+| 3.1 | Fix `dateKey` React key | Done | ✅ |
+| 3.2 | Replace deprecated `onKeyPress` | Done | ✅ |
+| 3.3 | Update `index.html` title | Done | ✅ |
+| 3.4 | Fix email template URLs | Done | ✅ |
+| 3.5 | Make TLS conditional | Done | ✅ |
 
-**Phase 3 Total:** 0 / 5
+**Phase 3 Total:** 5 / 5 ✅
 
 ---
 
@@ -86,6 +86,6 @@
 | 0 — Docs | 6 | 6 | 0 ✅ |
 | 1 — Critical | 5 | 0 | 5 |
 | 2 — High | 4 | 0 | 4 |
-| 3 — Medium | 5 | 0 | 5 |
+| 3 — Medium | 5 | 5 | 0 ✅ |
 | 4 — Low | 4 | 0 | 4 |
-| **All** | **24** | **6** | **18** |
+| **All** | **24** | **15** | **9** |

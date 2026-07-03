@@ -16,6 +16,53 @@
 
 ---
 
+## [Phase 3] — 2026-07-03
+
+### Fixed: M1 — `dateKey` React key missing
+
+**Problem:** `groupMessagesByDate()` returned `{ date, messages }` but JSX used `<div key={group.dateKey}>`.
+
+**Files Modified:**
+- `client/src/components/chat/MessageList.jsx:76`
+
+---
+
+### Fixed: M2 — Deprecated `onKeyPress` event
+
+**Problem:** React 19 deprecated `onKeyPress`. Used `onKeyDown` instead.
+
+**Files Modified:**
+- `client/src/components/chat/MessageInput.jsx:23,77`
+
+---
+
+### Fixed: M3 — `index.html` title still "vite-project"
+
+**Problem:** Tab title showed "vite-project" from Vite scaffold.
+
+**Files Modified:**
+- `client/index.html:7`
+
+---
+
+### Fixed: M4 — Email template links use wrong URL format
+
+**Problem:** Links used `?token=...` (query param) but frontend routes use path params. Removed dead commented-out code.
+
+**Files Modified:**
+- `server/src/services/email/templates/auth.template.js:4,17`
+
+---
+
+### Fixed: M5 — TLS validation always disabled
+
+**Problem:** `rejectUnauthorized: false` in all environments including production. Made conditional on `env.isProduction`.
+
+**Files Modified:**
+- `server/src/services/email/sendmail.js:14`
+
+---
+
 ## [Phase 2, H4] — 2026-07-03
 
 ### Fixed: H4 — Missing auth routes/pages
