@@ -66,7 +66,7 @@
 | **Root Cause** | Incorrect path in package.json. |
 | **Affected Files** | `server/package.json:5,7` |
 | **Priority** | Critical |
-| **Status** | Pending |
+| **Status** | Done — 2026-07-03 |
 | **Fix** | Change to `"start": "node src/server.js"`. |
 
 ---

@@ -27,9 +27,9 @@
 | 1.2 | Add `GET /users/search` backend route | Done | ✅ |
 | 1.3 | Fix socket token cookie lookup | Done | ✅ |
 | 1.4 | Fix pagination response path | Done | ✅ |
-| 1.5 | Fix `npm start` path | Pending | — |
+| 1.5 | Fix `npm start` path | Done | ✅ |
 
-**Phase 1 Total:** 4 / 5
+**Phase 1 Total:** 5 / 5 ✅
 
 ---
 

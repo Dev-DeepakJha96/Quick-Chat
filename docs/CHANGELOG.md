@@ -16,6 +16,19 @@
 
 ---
 
+## [Phase 1, C5] — 2026-07-03
+
+### Fixed: C5 — `npm start` path wrong
+
+**Problem:** `"start": "node server.js"` but entry point is at `src/server.js`.
+
+**Change:** Updated path to `"start": "node src/server.js"`.
+
+**Files Modified:**
+- `server/package.json:7`
+
+---
+
 ## [Phase 1, C4] — 2026-07-03
 
 ### Fixed: C4 — Pagination response path missing `.data`
