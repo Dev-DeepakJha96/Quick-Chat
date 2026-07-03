@@ -19,8 +19,8 @@ const MessageInput = ({ onSend, onTyping, disabled = false }) => {
     }
   };
 
-  // Handle key press (Enter to send, Shift+Enter for new line)
-  const handleKeyPress = (e) => {
+  // Handle key down (Enter to send, Shift+Enter for new line)
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
@@ -74,7 +74,7 @@ const MessageInput = ({ onSend, onTyping, disabled = false }) => {
             ref={inputRef}
             value={message}
             onChange={handleChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyDown}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             placeholder={disabled ? 'Connecting...' : 'Type a message...'}
