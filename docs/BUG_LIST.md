@@ -38,10 +38,10 @@
 |-------|-------|
 | **Description** | `SocketContext.jsx:37-42` looks for cookie starting with `token=` but backend sets cookies named `accessToken` and `refreshToken` (`auth.controller.js:9-24`). Socket auth always fails. |
 | **Root Cause** | Frontend assumes cookie name `token`, backend uses `accessToken`. |
-| **Affected Files** | `SocketContext.jsx:37-42` |
+| **Affected Files** | `AuthContext.jsx`, `SocketContext.jsx:37-42` |
 | **Priority** | Critical |
-| **Status** | Pending |
-| **Fix** | Change cookie lookup to `accessToken`. Optionally add fallback to read from AuthContext state. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Store `accessToken` in localStorage on login/register (AuthContext). Read from localStorage instead of httpOnly cookie (SocketContext). |
 
 ---
 

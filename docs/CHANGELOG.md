@@ -16,6 +16,20 @@
 
 ---
 
+## [Phase 1, C3] — 2026-07-03
+
+### Fixed: C3 — Socket token cookie lookup mismatch
+
+**Problem:** `SocketContext.jsx` tried to read `document.cookie` looking for a `token` cookie. The backend sets `accessToken` as httpOnly — JavaScript cannot read httpOnly cookies. Token was always null.
+
+**Change:** Store `accessToken` from login/register responses in localStorage (AuthContext). SocketContext reads from localStorage instead of document.cookie.
+
+**Files Modified:**
+- `client/src/context/AuthContext.jsx` — store `accessToken` in localStorage on login/register, clear on logout
+- `client/src/context/SocketContext.jsx` — read token from localStorage instead of document.cookie
+
+---
+
 ## [Phase 1, C2] — 2026-07-03
 
 ### Fixed: C2 — No `/users/search` backend route

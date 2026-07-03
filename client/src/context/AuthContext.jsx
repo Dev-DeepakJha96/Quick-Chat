@@ -80,6 +80,9 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data.data.user);
         setIsAuthenticated(true);
         localStorage.setItem('user', JSON.stringify(response.data.data.user));
+        if (response.data.data.accessToken) {
+          localStorage.setItem('accessToken', response.data.data.accessToken);
+        }
         toast.success('Registration successful! Welcome!');
         return { success: true, user: response.data.data.user };
       }
@@ -106,6 +109,9 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data.data.user);
         setIsAuthenticated(true);
         localStorage.setItem('user', JSON.stringify(response.data.data.user));
+        if (response.data.data.accessToken) {
+          localStorage.setItem('accessToken', response.data.data.accessToken);
+        }
         toast.success('Welcome back!');
         return { success: true, user: response.data.data.user };
       }
@@ -131,6 +137,7 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setIsAuthenticated(false);
       localStorage.removeItem('user');
+      localStorage.removeItem('accessToken');
       toast.success('Logged out successfully');
     }
   };

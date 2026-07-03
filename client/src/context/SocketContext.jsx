@@ -33,17 +33,10 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    // Get token from cookie
-    const getToken = () => {
-      const cookie = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('token='));
-      return cookie ? cookie.split('=')[1] : null;
-    };
-
-    const token = getToken();
+    // Get token from localStorage (set by AuthContext after login)
+    const token = localStorage.getItem('accessToken');
     if (!token) {
-      console.warn('No token found for socket connection');
+      console.warn('No access token found for socket connection');
       return;
     }
 
