@@ -16,6 +16,49 @@
 
 ---
 
+## [Phase 4, L1–L3] — 2026-07-03
+
+### Fixed: L1 — Filename typos
+
+Renamed `auth.middlware.js` → `auth.middleware.js`, `asyncHanlder.js` → `asyncHandler.js`. Updated all 8 import references across 6 files.
+
+**Files Modified:**
+- `server/src/utils/asyncHandler.js` (new, replacing typo)
+- `server/src/middlewares/auth.middleware.js` (new, replacing typo)
+- Controllers: auth, user, message, conversation — updated imports
+- Routes: auth, user, message, conversation — updated imports
+
+---
+
+### Fixed: L2 — Dead socket.service.js removed
+
+157-line `SocketService` class never imported anywhere. Removed.
+
+**Files Modified:**
+- `server/src/services/socket.service.js` (deleted)
+
+---
+
+### Fixed: L3 — 11 unused methods removed
+
+Removed dead code from 5 files:
+- `User.js`: `getPublicProfile`, `findByIdentifier`
+- `Conversation.model.js`: `isParticipant`, `getOtherParticipant`
+- `Message.model.js`: `isReadBy`, `markAsDelivered`, `searchMessages` (model static)
+- `ApiResponse.js`: `noContent`
+- `AppError.js`: `unauthorized`, `forbidden`, `conflict`, `internal` static factories
+
+---
+
+### Fixed: L4 — Exposed credentials sanitized
+
+Replaced real Gmail credentials with placeholders in `.env` (gitignored, on-disk change only). User must manually rotate Gmail app password before deployment.
+
+**Files Modified:**
+- `server/.env` — replaced real EMAIL_USER/EMAIL_PASS with placeholders
+
+---
+
 ## [Phase 3] — 2026-07-03
 
 ### Fixed: M1 — `dateKey` React key missing

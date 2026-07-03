@@ -58,7 +58,7 @@ Full-stack chat application (React + Vite + Tailwind v4 frontend, Express 5 + Mo
 | 4.1 | Rename typo files + update imports | `auth.middlware.js`, `asyncHanlder.js` + all importers | None | `require` paths match new filenames |
 | 4.2 | Remove dead `socket.service.js` | `services/socket.service.js` | None | No imports break |
 | 4.3 | Remove unused model methods | `User.js`, `Conversation.model.js`, `Message.model.js` | None | App compiles and runs |
-| 4.4 | Rotate exposed credentials | `server/.env` | None | Old secrets invalidated |
+| 4.4 | Rotate exposed credentials | `server/.env` | None | Old secrets invalidated ✅ |
 
 ---
 

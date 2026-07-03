@@ -198,12 +198,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Description** | `auth.middlware.js` (missing "e" in middlewar**e**) and `asyncHanlder.js` (missing "d" in Han**d**ler). |
+| **Description** | `auth.middlware.js` (missing "e") and `asyncHanlder.js` (missing "d"). |
 | **Root Cause** | Typo during file creation. |
 | **Affected Files** | `auth.middlware.js`, `asyncHanlder.js` + all files importing them |
 | **Priority** | Low |
-| **Status** | Pending |
-| **Fix** | Rename files and update all imports. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Renamed to `auth.middleware.js` and `asyncHandler.js`. Updated all 8 import references across 6 files. |
 
 ---
 
@@ -211,12 +211,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Description** | Entire `services/socket.service.js` (157 lines) is never imported anywhere. Contains `SocketService` class with helper methods. |
+| **Description** | Entire `services/socket.service.js` (157 lines) was never imported anywhere. |
 | **Root Cause** | Probably intended to be used by `socket.config.js` but never integrated. |
 | **Affected Files** | `services/socket.service.js` |
 | **Priority** | Low |
-| **Status** | Pending |
-| **Fix** | Delete the file or integrate into `socket.config.js`. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Deleted the file (zero import references existed). |
 
 ---
 
@@ -224,25 +224,25 @@
 
 | Field | Value |
 |-------|-------|
-| **Description** | `User.findByIdentifier()`, `Conversation.existsBetweenUsers()`, `Message.isReadBy()`, `Message.markAsDelivered()`, `Message.searchMessages()` (controller uses `Message.find()` directly). `ApiResponse.noContent()` and several `AppError` static factories never called. |
+| **Description** | `User.findByIdentifier()`, `User.getPublicProfile()`, `Conversation.isParticipant()`, `Conversation.getOtherParticipant()`, `Message.isReadBy()`, `Message.markAsDelivered()`, `Message.searchMessages()` (static — controller uses `Message.find()` directly). `ApiResponse.noContent()` and 4 `AppError` static factories. |
 | **Root Cause** | Accumulated during development, never pruned. |
 | **Affected Files** | `User.js`, `Conversation.model.js`, `Message.model.js`, `ApiResponse.js`, `AppError.js` |
 | **Priority** | Low |
-| **Status** | Pending |
-| **Fix** | Remove unused exports. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Removed 11 unused methods across 5 files. |
 
 ---
 
-### L4 — Real credentials in tracked `.env`
+### L4 — Real credentials in `.env`
 
 | Field | Value |
 |-------|-------|
-| **Description** | `server/.env` contains real Gmail address, app password, and JWT secrets. If the repo is public (or becomes public), these are exposed. |
-| **Root Cause** | `.env` listed in `.gitignore` but was committed before gitignore existed (or was force-added). |
+| **Description** | `server/.env` contained real Gmail address and app password visible on disk. `.env` was never committed to git (`.gitignore` was in place). |
+| **Root Cause** | Real values left in development `.env` file. |
 | **Affected Files** | `server/.env` |
 | **Priority** | Low (Security) |
-| **Status** | Pending |
-| **Fix** | Rotate all credentials immediately. Remove `.env` from git history. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Replaced with placeholders. User must manually rotate Gmail app password and update `.env` before deployment. |
 
 ---
 
@@ -250,12 +250,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Description** | Will be removed as part of H1 fix. Listed separately for tracking. |
+| **Description** | Resolved by H1 fix. |
 | **Root Cause** | Same as H1. |
 | **Affected Files** | `AuthContext.jsx:143` |
 | **Priority** | Low |
-| **Status** | Pending |
-| **Fix** | Resolved by H1. |
+| **Status** | Done — 2026-07-03 |
+| **Fix** | Resolved by H1 (endpoint changed to `/auth/update-me`). |
 
 ---
 
@@ -266,5 +266,5 @@
 | 🔴 Critical | 5 | All Done ✅ |
 | 🟠 High | 4 | All Done ✅ |
 | 🟡 Medium | 5 | All Done ✅ |
-| 🔵 Low | 5 | All Pending |
-| **Total** | **19** | **14 / 19 Done** |
+| 🔵 Low | 5 | 4 Done, 1 Resolved by H1 ✅ |
+| **Total** | **19** | **19 / 19 Done 🎉** |
