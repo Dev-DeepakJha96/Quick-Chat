@@ -34,6 +34,11 @@ exports.registerUser = async ({ username, email, password }) => {
     emailVerificationExpires: Date.now() + 10 * 60 * 1000,
   });
 
+  const accessToken = signAccessToken(user._id);
+  const refreshToken = signRefreshToken(user._id);
+  user.refreshToken = hashToken(refreshToken);
+  await user.save();
+
   logger.info(`User created: ${email}`);
 
   sendEmail({
@@ -42,7 +47,7 @@ exports.registerUser = async ({ username, email, password }) => {
     html: emailVerificationTemplate(rawToken),
   });
 
-  return { user, verificationToken: rawToken };
+  return { user, verificationToken: rawToken, accessToken, refreshToken };
 };
 
 exports.verifyEmail = async (token) => {

@@ -25,8 +25,8 @@ const setAuthCookies = (res, accessToken, refreshToken) => {
 };
 
 exports.register = asyncHandler(async (req, res) => {
-  console.log(req.body);
   const result = await authService.registerUser(req.body);
+  setAuthCookies(res, result.accessToken, result.refreshToken);
   logger.info(`User registered: ${result.user.email}`, { requestId: req.requestId });
   res.status(201).json(ApiResponse.created(result, 'User registered successfully'));
 });
