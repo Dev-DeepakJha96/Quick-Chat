@@ -42,6 +42,7 @@ export const ChatProvider = ({ children }) => {
       setConversations(response.data.data.conversations || []);
     } catch (error) {
       console.error('Failed to load conversations:', error);
+      toast.error('Failed to load conversations');
     }
   }, []);
 
@@ -213,6 +214,7 @@ export const ChatProvider = ({ children }) => {
       setSearchResults(response.data.data.users || []);
     } catch (error) {
       console.error('Failed to search users:', error);
+      toast.error('Failed to search users');
       setSearchResults([]);
     } finally {
       setSearching(false);

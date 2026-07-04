@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useChat } from '../../context/ChatContext';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../common/LoadingSpinner';
+import toast from 'react-hot-toast';
 
 const SearchUsers = () => {
   const { user } = useAuth();
@@ -36,9 +37,13 @@ const SearchUsers = () => {
 
   // Handle starting conversation
   const handleStartConversation = async (participant) => {
-    await createConversation(participant._id);
-    setQuery('');
-    setDebouncedQuery('');
+    try {
+      await createConversation(participant._id);
+      setQuery('');
+      setDebouncedQuery('');
+    } catch (error) {
+      toast.error('Failed to start conversation');
+    }
   };
 
   // Get avatar color

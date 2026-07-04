@@ -20,6 +20,14 @@ const ResetPasswordPage = () => {
       newErrors.newPassword = 'Password is required';
     } else if (newPassword.length < 8) {
       newErrors.newPassword = 'Password must be at least 8 characters';
+    } else if (!/[a-z]/.test(newPassword)) {
+      newErrors.newPassword = 'Password must contain a lowercase letter';
+    } else if (!/[A-Z]/.test(newPassword)) {
+      newErrors.newPassword = 'Password must contain an uppercase letter';
+    } else if (!/[0-9]/.test(newPassword)) {
+      newErrors.newPassword = 'Password must contain a number';
+    } else if (!/[!@#$%^&*]/.test(newPassword)) {
+      newErrors.newPassword = 'Password must contain a special character (!@#$%^&*)';
     }
 
     if (!confirmPassword) {
