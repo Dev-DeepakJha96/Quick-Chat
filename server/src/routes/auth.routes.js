@@ -6,6 +6,7 @@ const {
   forgotPasswordSchema,
   resetPasswordSchema,
   verifyEmailSchema,
+  updateMeSchema,
   changePasswordSchema,
 } = require('../validators/auth.validator');
 const { protect } = require('../middlewares/auth.middleware');
@@ -21,7 +22,7 @@ router.post('/refresh', authController.refresh);
 router.post('/forgot-password', validate(forgotPasswordSchema), authController.forgotPassword);
 router.post('/reset-password', validate(resetPasswordSchema), authController.resetPassword);
 router.get('/me', protect, authController.getMe);
-router.patch('/update-me', protect, authController.updateMe);
+router.patch('/update-me', protect, validate(updateMeSchema), authController.updateMe);
 router.patch('/change-password', protect,validate(changePasswordSchema), authController.changePassword);
 
 module.exports = router;

@@ -90,8 +90,9 @@ export const AuthProvider = ({ children }) => {
       return { success: false, error: 'Registration failed' };
     } catch (error) {
       const message = error.response?.data?.message || 'Registration failed';
+      const serverErrors = error.response?.data?.errors;
       toast.error(message);
-      return { success: false, error: message };
+      return { success: false, error: message, serverErrors };
     }
   };
 
@@ -119,8 +120,9 @@ export const AuthProvider = ({ children }) => {
       return { success: false, error: 'Login failed' };
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed';
+      const serverErrors = error.response?.data?.errors;
       toast.error(message);
-      return { success: false, error: message };
+      return { success: false, error: message, serverErrors };
     }
   };
 

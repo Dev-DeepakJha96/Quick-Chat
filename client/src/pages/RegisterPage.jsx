@@ -89,6 +89,12 @@ const RegisterPage = () => {
     
     if (result.success) {
       navigate('/chat');
+    } else if (result.serverErrors) {
+      const fieldErrors = {};
+      result.serverErrors.forEach(({ field, message }) => {
+        fieldErrors[field] = message;
+      });
+      setErrors(fieldErrors);
     }
   };
 

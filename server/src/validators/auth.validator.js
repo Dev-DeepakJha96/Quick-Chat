@@ -21,7 +21,12 @@ const tokenSchema = z.string().min(10, 'Invalid token').max(500, 'Invalid token'
 // REGISTER
 // =====================
 const registerSchema = z.object({
-  username: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
+  username: z
+    .string()
+    .trim()
+    .min(3, 'Username must be at least 3 characters')
+    .max(30, 'Username cannot exceed 30 characters')
+    .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
 
   email: emailSchema,
 
@@ -60,6 +65,24 @@ const verifyEmailSchema = z.object({
   token: tokenSchema,
 });
 
+// =====================
+// UPDATE PROFILE
+// =====================
+const updateMeSchema = z.object({
+  username: z
+    .string()
+    .trim()
+    .min(3, 'Username must be at least 3 characters')
+    .max(30, 'Username cannot exceed 30 characters')
+    .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores')
+    .optional(),
+  email: emailSchema.optional(),
+  avatarColor: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/, 'Avatar color must be a valid hex color')
+    .optional(),
+});
+
 const changePasswordSchema = z
   .object({
     currentPassword: passwordSchema,
@@ -76,5 +99,6 @@ module.exports = {
   forgotPasswordSchema,
   resetPasswordSchema,
   verifyEmailSchema,
+  updateMeSchema,
   changePasswordSchema,
 };
