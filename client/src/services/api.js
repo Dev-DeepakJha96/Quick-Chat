@@ -39,6 +39,20 @@ api.interceptors.request.use(
   }
 );
 
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve();
+    }
+  });
+  failedQueue = [];
+};
+
 // ====================
 // Response Interceptor
 // ====================
@@ -56,13 +70,12 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Handle errors globally
-    const { response } = error;
+    const { config: requestConfig, response } = error;
     
     // Log errors in development
     if (import.meta.env.DEV) {
       console.error('❌ API Error:', {
-        url: error.config?.url,
+        url: requestConfig?.url,
         status: response?.status,
         data: response?.data,
         message: error.message,
@@ -73,14 +86,49 @@ api.interceptors.response.use(
     if (response) {
       switch (response.status) {
         case 401:
-          // Unauthorized - clear auth state and redirect to login
-          if (!window.location.pathname.includes('/login')) {
-            toast.error('Session expired. Please login again.');
-            // Clear auth state (will be handled by AuthContext)
-            localStorage.removeItem('user');
-            window.location.href = '/login';
+          // Don't redirect if already on login/register or if refresh itself fails
+          if (window.location.pathname.includes('/login') || window.location.pathname.includes('/register')) {
+            break;
           }
-          break;
+          
+          if (requestConfig.url === '/auth/refresh') {
+            // Refresh token itself failed — session is truly expired
+            localStorage.removeItem('user');
+            localStorage.removeItem('accessToken');
+            window.location.href = '/login';
+            return Promise.reject(error);
+          }
+          
+          if (!isRefreshing) {
+            isRefreshing = true;
+            
+            return api.post('/auth/refresh')
+              .then((refreshResponse) => {
+                isRefreshing = false;
+                processQueue(null);
+                
+                if (refreshResponse.data?.data?.accessToken) {
+                  localStorage.setItem('accessToken', refreshResponse.data.data.accessToken);
+                }
+                
+                return api(requestConfig);
+              })
+              .catch((refreshError) => {
+                isRefreshing = false;
+                processQueue(refreshError);
+                localStorage.removeItem('user');
+                localStorage.removeItem('accessToken');
+                toast.error('Session expired. Please login again.');
+                window.location.href = '/login';
+                return Promise.reject(refreshError);
+              });
+          }
+          
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          }).then(() => {
+            return api(requestConfig);
+          });
           
         case 403:
           toast.error('You do not have permission to perform this action');
@@ -99,7 +147,6 @@ api.interceptors.response.use(
           break;
           
         default:
-          // Show error message from server if available
           const errorMessage = response.data?.message || 'Something went wrong';
           toast.error(errorMessage);
       }
