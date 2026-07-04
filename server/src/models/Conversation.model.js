@@ -15,6 +15,11 @@ const conversationSchema = new mongoose.Schema(
       default: Date.now,
       index: true,
     },
+    lastMessage: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Message',
+    default: null,
+  },
     isActive: {
       type: Boolean,
       default: true,
@@ -66,14 +71,12 @@ conversationSchema.virtual('messageCount', {
   count: true,
 });
 
-conversationSchema.pre('save', function (next) {
-  // Sort participants to ensure consistent order
+conversationSchema.pre('save', async function () {
   if (this.participants && this.participants.length === 2) {
-    this.participants.sort((a, b) => {
-      return a.toString().localeCompare(b.toString());
-    });
+    this.participants.sort((a, b) =>
+      a.toString().localeCompare(b.toString())
+    );
   }
-  next();
 });
 
 conversationSchema.statics.findOrCreate = async function (user1Id, user2Id) {
@@ -140,3 +143,4 @@ conversationSchema.statics.getTotalUnreadCount = async function (userId) {
 };
 
 const Conversation = mongoose.model('Conversation', conversationSchema);
+module.exports = Conversation;

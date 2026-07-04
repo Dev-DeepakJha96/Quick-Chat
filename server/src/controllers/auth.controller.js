@@ -63,12 +63,12 @@ exports.logout = asyncHandler(async (req, res) => {
 
 exports.getMe = asyncHandler(async (req, res) => {
   const user = await authService.getUserProfile(req.user._id);
-  res.status(200).json(ApiResponse.success(user, 'User profile fetched'));
+  res.status(200).json(ApiResponse.success({ user }, 'User profile fetched'));
 });
 
 exports.updateMe = asyncHandler(async (req, res) => {
   const user = await authService.updateUserProfile(req.user._id, req.body);
-  res.status(200).json(ApiResponse.success(user, 'Profile updated'));
+  res.status(200).json(ApiResponse.success({ user }, 'Profile updated'));
 });
 
 exports.changePassword = asyncHandler(async (req, res) => {
