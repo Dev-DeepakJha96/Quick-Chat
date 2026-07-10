@@ -10,10 +10,7 @@ const requiredVars = [
   'JWT_REFRESH_SECRET',
   'JWT_ACCESS_EXPIRY',
   'JWT_REFRESH_EXPIRY',
-  'EMAIL_HOST',
-  'EMAIL_PORT',
-  'EMAIL_USER',
-  'EMAIL_PASS',
+  'RESEND_API_KEY',
 ];
 
 requiredVars.forEach((envVar) => {
@@ -53,10 +50,8 @@ const config = {
     bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS, 10) || 12,
   },
   email: {
-    emailHost: process.env.EMAIL_HOST,
-    emailPort: parseInt(process.env.EMAIL_PORT, 10),
-    emailUser: process.env.EMAIL_USER,
-    emailPass: process.env.EMAIL_PASS,
+    apiKey: process.env.RESEND_API_KEY,
+    fromEmail: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
   },
 };
 
