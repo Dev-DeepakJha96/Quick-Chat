@@ -1,7 +1,7 @@
 const config = require('../../../config/env.config');
 
 const emailVerificationTemplate = (token) => {
-  const link = `${config.server.clientUrls[0]}/verify-email/${token}`;
+  const link = `${config.server.clientUrls[2]}/verify-email/${token}`;
 
   return `
     <div>
