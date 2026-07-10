@@ -18,6 +18,10 @@ class AppError extends Error {
   static notFound(message = 'Not Found') {
     return new AppError(message, 404);
   }
+
+  static forbidden(message = 'Forbidden') {
+    return new AppError(message, 403);
+  }
 }
 
 module.exports = AppError;

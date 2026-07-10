@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -14,13 +15,22 @@ const routes = require('./routes/index');
 
 const app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
+
 app.use(
   cors({
     origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, curl, etc.)
       if (!origin) return callback(null, true);
-
-      if (config.server.clientUrls.indexOf(origin) !== -1 || config.isDevelopment) {
+      
+      // Only allow configured client URLs (no development bypass for security)
+      if (config.server.clientUrls.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
@@ -32,15 +42,47 @@ app.use(
   })
 );
 
-const limiter = rateLimit({
-  windowMs: config.security.rateLimitWindowMs,
-  max: config.security.rateLimitMaxRequests,
-  message: 'Too many requests from this IP, please try again later.',
+
+
+// const limiter = rateLimit({
+//   windowMs: config.security.rateLimitWindowMs,
+//   max: config.security.rateLimitMaxRequests,
+//   message: 'Too many requests from this IP, please try again later.',
+//   standardHeaders: true,
+//   legacyHeaders: false,
+//   skip: (req) => config.isDevelopment && req.path === '/health', // Skip rate limit for health check in dev
+// });
+// app.use('/api', limiter);
+
+// Stricter rate limiting for auth endpoints (brute force protection)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 attempts per window
+  message: 'Too many authentication attempts, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => config.isDevelopment && req.path === '/health', // Skip rate limit for health check in dev
 });
-app.use('/api', limiter);
+
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // 5 registrations per hour
+  message: 'Too many registration attempts, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3, // 3 forgot password attempts per hour
+  message: 'Too many password reset requests, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply stricter limiters to auth routes
+app.use('/api/v1/auth/login', authLimiter);
+app.use('/api/v1/auth/register', registerLimiter);
+app.use('/api/v1/auth/forgot-password', forgotPasswordLimiter);
 
 if (config.isDevelopment) {
   app.use(
@@ -66,6 +108,9 @@ app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve uploaded files statically
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use((req, res, next) => {
   req.requestId = `${Date.now()}-${Math.random().toString(36).substring(7)}`;

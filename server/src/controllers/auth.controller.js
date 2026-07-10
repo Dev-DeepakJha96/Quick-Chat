@@ -9,7 +9,8 @@ const setAuthCookies = (res, accessToken, refreshToken) => {
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: config.isProduction,
-      sameSite: 'strict',
+      sameSite: config.isProduction ? 'none' : 'lax',
+      path: '/',
       maxAge: 15 * 60 * 1000,
     });
   }
@@ -18,7 +19,8 @@ const setAuthCookies = (res, accessToken, refreshToken) => {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: config.isProduction,
-      sameSite: 'strict',
+      sameSite: config.isProduction ? 'none' : 'lax',
+      path: '/',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
   }
@@ -26,9 +28,9 @@ const setAuthCookies = (res, accessToken, refreshToken) => {
 
 exports.register = asyncHandler(async (req, res) => {
   const result = await authService.registerUser(req.body);
-  setAuthCookies(res, result.accessToken, result.refreshToken);
+  // Note: No tokens are set on registration - user must verify email first, then login
   logger.info(`User registered: ${result.user.email}`, { requestId: req.requestId });
-  res.status(201).json(ApiResponse.created(result, 'User registered successfully'));
+  res.status(201).json(ApiResponse.created({ user: result.user }, 'User registered successfully. Please verify your email.'));
 });
 
 exports.verifyEmail = asyncHandler(async (req, res) => {
@@ -41,7 +43,8 @@ exports.login = asyncHandler(async (req, res) => {
   const { user, accessToken, refreshToken } = await authService.loginUser(req.body);
   logger.info(`User logged in: ${user.email}`, { requestId: req.requestId });
   setAuthCookies(res, accessToken, refreshToken);
-  res.status(200).json(ApiResponse.success({ user, accessToken }, 'Login successful'));
+  // Don't include tokens in response body - they're in httpOnly cookies
+  res.status(200).json(ApiResponse.success({ user }, 'Login successful'));
 });
 
 exports.refresh = asyncHandler(async (req, res) => {
@@ -50,14 +53,23 @@ exports.refresh = asyncHandler(async (req, res) => {
   );
   logger.info(`Token refreshed`, { requestId: req.requestId });
   setAuthCookies(res, accessToken, refreshToken);
-  res.status(200).json(ApiResponse.success({ accessToken }, 'Token refreshed'));
+  // Don't include tokens in response body - they're in httpOnly cookies
+  res.status(200).json(ApiResponse.success(null, 'Token refreshed'));
 });
 
 exports.logout = asyncHandler(async (req, res) => {
   await authService.logoutUser(req.user._id);
   logger.info(`User logged out: ${req.user._id}`, { requestId: req.requestId });
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
+  
+  const clearOptions = {
+    httpOnly: true,
+    secure: config.isProduction,
+    sameSite: config.isProduction ? 'none' : 'lax',
+    path: '/',
+  };
+  
+  res.clearCookie('accessToken', clearOptions);
+  res.clearCookie('refreshToken', clearOptions);
   res.status(200).json(ApiResponse.success(null, 'Logged out successfully'));
 });
 

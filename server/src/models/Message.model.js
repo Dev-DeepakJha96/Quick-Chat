@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const logger = require('../config/logger.config');
 
 const messageSchema = new mongoose.Schema(
   {
@@ -111,20 +112,7 @@ messageSchema.index({ conversation: 1, 'readBy.user': 1 });
 messageSchema.index({ text: 'text' });
 messageSchema.index({ isDeleted: 1 });
 
-messageSchema.pre('save', async function (next) {
-  if (this.isNew) {
-    try {
-      const Conversation = mongoose.model('Conversation');
-      await Conversation.findByIdAndUpdate(this.conversation, {
-        lastMessage: this._id,
-        lastMessageAt: this.createdAt || new Date(),
-      });
-    } catch (error) {
-      console.error('Error updating conversation lastMessage:', error);
-    }
-  }
-  next();
-});
+
 
 messageSchema.methods.markAsRead = async function (userId) {
   const userIdStr = userId.toString();
@@ -158,12 +146,15 @@ messageSchema.methods.deleteForUser = async function (userId) {
 messageSchema.statics.getConversationMessages = async function (conversationId, options = {}) {
   const { limit = 50, before = null, after = null, userId = null } = options;
   const query = { conversation: conversationId, isDeleted: false };
-  if (before) query.createdAt = { $lt: new Date(before) };
-  if (after) query.createdAt = { $gt: new Date(after) };
+  if (before || after) {
+    query.createdAt = {};
+    if (before) query.createdAt.$lt = new Date(before);
+    if (after) query.createdAt.$gt = new Date(after);
+  }
   if (userId) query.deletedFor = { $ne: userId };
 
   return this.find(query)
-    .populate('sender', 'username email avatarColor')
+    .populate('sender', 'username email avatarColor avatar')
     .populate('replyTo')
     .sort({ createdAt: -1 })
     .limit(parseInt(limit) + 1)

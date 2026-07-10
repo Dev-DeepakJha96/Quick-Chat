@@ -60,6 +60,41 @@ router.get(
 router.get('/unread/:conversationId', messageController.getUnreadCount);
 
 /**
+ * @route POST /api/v1/messages/:messageId/reactions
+ * @desc Add a reaction to a message
+ * @access Private
+ */
+router.post(
+  '/:messageId/reactions',
+  validate(messageValidation.addReactionParams, 'params'),
+  validate(messageValidation.addReactionBody),
+  messageController.addReaction
+);
+
+/**
+ * @route DELETE /api/v1/messages/:messageId/reactions/:emoji
+ * @desc Remove a reaction from a message
+ * @access Private
+ */
+router.delete(
+  '/:messageId/reactions/:emoji',
+  validate(messageValidation.removeReaction, 'params'),
+  messageController.removeReaction
+);
+
+/**
+ * @route PATCH /api/v1/messages/:messageId
+ * @desc Edit a message (only sender can edit)
+ * @access Private
+ */
+router.patch(
+  '/:messageId',
+  validate(messageValidation.editMessageParams, 'params'),
+  validate(messageValidation.editMessageBody),
+  messageController.editMessage
+);
+
+/**
  * @route DELETE /api/v1/messages/:messageId
  * @desc Delete a message
  * @access Private
@@ -69,5 +104,12 @@ router.delete(
   validate(messageValidation.deleteMessage, 'params'),
   messageController.deleteMessage
 );
+
+/**
+ * @route POST /api/v1/messages/clear/:conversationId
+ * @desc Clear chat history for the current user
+ * @access Private
+ */
+router.post('/clear/:conversationId', messageController.clearChat);
 
 module.exports = router;

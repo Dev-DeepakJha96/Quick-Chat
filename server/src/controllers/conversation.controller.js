@@ -13,6 +13,8 @@ const logger = require('../config/logger.config');
  * Private
  */
 exports.getConversations = asyncHandler(async (req, res, next) => {
+  // Limit capped at 100 to prevent excessive memory usage from large result sets
+  // Client should implement infinite scroll rather than loading all conversations
   const { limit = 50, skip = 0 } = req.query;
   const result = await ConversationService.getUserConversations({
     userId: req.user._id,

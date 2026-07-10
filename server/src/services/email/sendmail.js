@@ -25,13 +25,12 @@ const sendEmail = async ({ to, subject, html }) => {
     });
     logger.info(`Email sent to ${to.replace(/(.{3}).+(@)/, '$1***$2')}`, { subject });
   } catch (error) {
-  logger.error("Email Error", {
-    message: error.message,
-    stack: error.stack,
-  });
-
-  throw error;
-}
+    logger.error('Email Error', {
+      message: error.message,
+      stack: error.stack,
+    });
+    throw error;
+  }
 };
 
 module.exports = { sendEmail };

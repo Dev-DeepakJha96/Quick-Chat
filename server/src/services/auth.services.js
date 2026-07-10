@@ -34,20 +34,22 @@ exports.registerUser = async ({ username, email, password }) => {
     emailVerificationExpires: Date.now() + 10 * 60 * 1000,
   });
 
-  const accessToken = signAccessToken(user._id);
-  const refreshToken = signRefreshToken(user._id);
-  user.refreshToken = hashToken(refreshToken);
-  await user.save();
+  // Note: Tokens are NOT generated on registration
+  // User must verify email first, then login to get tokens
+  // This prevents bypassing email verification
 
   logger.info(`User created: ${email}`);
 
+  // Fire-and-forget email — user creation already succeeded
   sendEmail({
     to: email,
     subject: 'Verify Your Email',
     html: emailVerificationTemplate(rawToken),
+  }).catch((err) => {
+    logger.error('Verification email failed, user still created:', err);
   });
 
-  return { user, verificationToken: rawToken, accessToken, refreshToken };
+  return { user, verificationToken: rawToken };
 };
 
 exports.verifyEmail = async (token) => {
@@ -69,9 +71,34 @@ exports.verifyEmail = async (token) => {
 };
 
 exports.loginUser = async ({ email, password }) => {
-  const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
-  if (!user || !(await user.comparePassword(password))) {
+  const user = await User.findOne({ email: email.toLowerCase() }).select('+password +lockedUntil +failedLoginAttempts');
+  
+  if (!user) {
     throw new AppError('Invalid credentials', 401);
+  }
+
+  // Check if account is locked
+  if (user.isLocked()) {
+    const lockTimeRemaining = Math.ceil((user.lockedUntil - Date.now()) / 60000);
+    throw new AppError(`Account is locked. Please try again in ${lockTimeRemaining} minutes.`, 423);
+  }
+
+  // Check password
+  if (!(await user.comparePassword(password))) {
+    // Increment failed attempts
+    await user.incrementLoginAttempts();
+    
+    const remainingAttempts = 5 - (user.failedLoginAttempts + 1);
+    if (remainingAttempts <= 0) {
+      throw new AppError('Account has been locked due to too many failed attempts. Please try again in 15 minutes.', 423);
+    }
+    
+    throw new AppError(`Invalid credentials. ${remainingAttempts} attempts remaining.`, 401);
+  }
+
+  // Reset failed attempts on successful login
+  if (user.failedLoginAttempts > 0) {
+    await user.resetLoginAttempts();
   }
 
   if (!user.isEmailVerified) throw new AppError('Email not verified', 403);
@@ -130,13 +157,15 @@ exports.getUserProfile = async (userId) => {
 };
 
 exports.updateUserProfile = async (userId, updateDataVars) => {
-  const { username, email, avatarColor } = updateDataVars;
+  const { username, email, avatarColor, avatar } = updateDataVars;
 
   const updateData = {};
 
   if (username) updateData.username = username.toLowerCase();
   if (email) updateData.email = email.toLowerCase();
   if (avatarColor) updateData.avatarColor = avatarColor;
+  if (avatar !== undefined) updateData.avatar = avatar;
+
 
   // If nothing to update
   if (Object.keys(updateData).length === 0) {
@@ -206,6 +235,8 @@ exports.forgotPassword = async (email) => {
     to: email,
     subject: 'Reset Your Password',
     html: resetPasswordTemplate(resetToken),
+  }).catch((err) => {
+    logger.error('Password reset email failed, token still generated:', err);
   });
 
   logger.info(`Password reset token generated for: ${email}`);

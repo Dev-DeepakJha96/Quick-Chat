@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-package-lock.json
 
 # Environment variables
 .env
@@ -43,3 +42,5 @@ tmp/
 temp/
 *.tmp
 tree.js
+uploads/*
+!uploads/.gitkeep

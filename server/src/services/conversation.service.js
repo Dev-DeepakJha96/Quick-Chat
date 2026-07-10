@@ -12,26 +12,18 @@ class ConversationService {
     if (users.length !== 2) {
       throw new AppError('One or both users not found');
     }
+
     const conversation = await Conversation.findOrCreate(user1Id, user2Id);
-    await conversation.populate('participants', 'username email avatarColor isOnline lastSeen');
+    await conversation.populate('participants', 'username email avatarColor avatar isOnline lastSeen');
     return conversation;
   }
+
   static async getUserConversations({ userId, limit = 50, skip = 0 }) {
-    const conversations = await Conversation.getUserConversations(userId, {
+    // Use aggregation pipeline to get conversations with unread counts in a single query
+    const conversationsWithUnread = await Conversation.getUserConversations(userId, {
       limit,
       skip,
     });
-
-    const Message = require('../models/Message.model');
-    const conversationsWithUnread = await Promise.all(
-      conversations.map(async (conv) => {
-        const unreadCount = await Message.getUnreadCount(conv._id, userId);
-        return {
-          ...conv.toObject(),
-          unreadCount,
-        };
-      })
-    );
 
     return {
       conversations: conversationsWithUnread,
@@ -49,7 +41,7 @@ class ConversationService {
       participants: userId,
       isActive: true,
     })
-      .populate('participants', 'username email avatarColor isOnline lastSeen')
+      .populate('participants', 'username email avatarColor avatar isOnline lastSeen')
       .populate('lastMessage');
 
     if (!conversation) {
@@ -59,7 +51,6 @@ class ConversationService {
   }
 
   static async deleteConversation({ conversationId, userId }) {
-
     const conversation = await Conversation.findOne({
       _id: conversationId,
       participants: userId,
@@ -68,16 +59,21 @@ class ConversationService {
     if (!conversation) {
       throw new AppError('Conversation not found');
     }
-    conversation.participants = conversation.participants.filter(
-      (p)=> p.toString() !== userId.toString()
-    )
 
-       if (conversation.participants.length === 0) {
-      // If no participants left, deactivate
-      conversation.isActive = false;
+    // Check if user already deleted it, if not, add it
+    const isAlreadyDeleted = conversation.deletedFor.some(
+      (d) => d.user.toString() === userId.toString()
+    );
+
+    if (!isAlreadyDeleted) {
+      conversation.deletedFor.push({
+        user: userId,
+        deletedAt: new Date(),
+      });
     }
-  await conversation.save(); 
-  return true; 
+
+    await conversation.save();
+    return true;
   }
 }
 

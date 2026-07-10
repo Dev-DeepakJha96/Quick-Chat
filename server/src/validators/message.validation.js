@@ -11,7 +11,7 @@ const objectIdSchema = z
  */
 const messageValidation = {
   /**
-   * Send message validation
+   * Send message validation (body)
    */
   sendMessage: z.object({
     conversationId: objectIdSchema,
@@ -21,6 +21,7 @@ const messageValidation = {
       })
       .min(1, "Message cannot be empty")
       .max(5000, "Message cannot exceed 5000 characters"),
+    replyTo: objectIdSchema.nullable().optional(),
   }),
 
   /**
@@ -43,10 +44,61 @@ const messageValidation = {
   }),
 
   /**
-   * Delete message validation
+   * Delete message params validation
    */
   deleteMessage: z.object({
     messageId: objectIdSchema,
+  }),
+
+  /**
+   * Edit message params validation
+   */
+  editMessageParams: z.object({
+    messageId: objectIdSchema,
+  }),
+
+  /**
+   * Edit message body validation
+   */
+  editMessageBody: z.object({
+    text: z
+      .string({
+        required_error: "Message text is required",
+      })
+      .min(1, "Message cannot be empty")
+      .max(5000, "Message cannot exceed 5000 characters"),
+  }),
+
+  /**
+   * Add reaction params validation
+   */
+  addReactionParams: z.object({
+    messageId: objectIdSchema,
+  }),
+
+  /**
+   * Add reaction body validation
+   */
+  addReactionBody: z.object({
+    emoji: z
+      .string({
+        required_error: "Emoji is required",
+      })
+      .min(1, "Emoji cannot be empty")
+      .max(10, "Emoji cannot exceed 10 characters"),
+  }),
+
+  /**
+   * Remove reaction params validation
+   */
+  removeReaction: z.object({
+    messageId: objectIdSchema,
+    emoji: z
+      .string({
+        required_error: "Emoji is required",
+      })
+      .min(1, "Emoji cannot be empty")
+      .max(10, "Emoji cannot exceed 10 characters"),
   }),
 
   /**

@@ -1,97 +1,131 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './context/AuthContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
 import { ChatProvider } from './context/ChatContext';
-import ProtectedRoute from './components/common/ProtectedRoute';
 
-// Pages
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
-import VerifyEmailPage from './pages/VerifyEmailPage';
-import ChatPage from './pages/ChatPage';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
+import VerifyEmail from './pages/VerifyEmail';
 
-// Error Boundary
-import ErrorBoundary from './components/common/ErrorBoundary';
+// Protected Route Wrapper
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
+
+// Guest-Only Route Wrapper
+const GuestRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
 
 function App() {
   return (
-    <ErrorBoundary>
-      <BrowserRouter>
-        <AuthProvider>
-          <SocketProvider>
-            <ChatProvider>
-              <Toaster
-                position="top-right"
-                toastOptions={{
-                  duration: 4000,
-                  style: {
-                    background: '#fff',
-                    color: '#333',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                    borderRadius: '12px',
-                    padding: '12px 16px',
-                  },
-                  success: {
-                    icon: '✅',
-                    style: {
-                      borderLeft: '4px solid #22c55e',
-                    },
-                  },
-                  error: {
-                    icon: '❌',
-                    style: {
-                      borderLeft: '4px solid #ef4444',
-                    },
-                  },
-                }}
-              />
-              
+    <ThemeProvider>
+      <AuthProvider>
+        <SocketProvider>
+          <ChatProvider>
+            <BrowserRouter>
               <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-                <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
+                {/* Guest Routes */}
                 <Route
-                  path="/chat"
+                  path="/login"
                   element={
-                    <ProtectedRoute>
-                      <ChatPage />
-                    </ProtectedRoute>
+                    <GuestRoute>
+                      <Login />
+                    </GuestRoute>
                   }
                 />
+                <Route
+                  path="/register"
+                  element={
+                    <GuestRoute>
+                      <Register />
+                    </GuestRoute>
+                  }
+                />
+                <Route path="/verify-email" element={<VerifyEmail />} />
+
+                {/* Protected Routes */}
                 <Route
                   path="/"
                   element={
                     <ProtectedRoute>
-                      <Navigate to="/chat" replace />
+                      <Home />
                     </ProtectedRoute>
                   }
                 />
                 <Route
-                  path="*"
+                  path="/profile"
                   element={
-                    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                      <div className="text-center">
-                        <h1 className="text-6xl font-bold text-gray-300">404</h1>
-                        <p className="text-xl text-gray-600 mt-4">Page not found</p>
-                        <a href="/" className="text-primary-600 hover:text-primary-700 mt-4 inline-block">
-                          Go back home
-                        </a>
-                      </div>
-                    </div>
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
                   }
                 />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Fallback Redirect */}
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
-            </ChatProvider>
-          </SocketProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </ErrorBoundary>
+            </BrowserRouter>
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={true}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"
+            />
+          </ChatProvider>
+        </SocketProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

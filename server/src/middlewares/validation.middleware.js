@@ -8,6 +8,12 @@ const validate = (schema, source = 'body') => {
 
       next();
     } catch (error) {
+      console.log('--- VALIDATION ERROR DEBUG ---');
+      console.log('Source:', source);
+      console.log('Payload:', JSON.stringify(req[source], null, 2));
+      console.log('Zod Error Issues:', JSON.stringify(error?.issues, null, 2));
+      console.log('------------------------------');
+
       const errors =
         error?.issues?.map((e) => ({
           field: e.path.join('.'),

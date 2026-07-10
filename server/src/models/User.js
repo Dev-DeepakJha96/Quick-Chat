@@ -47,6 +47,11 @@ const userSchema = new mongoose.Schema(
         return colors[Math.floor(Math.random() * colors.length)];
       },
     },
+    avatar: {
+      type: String,
+      default: null,
+    },
+
     role: {
       type: String,
       enum: ['user', 'admin'],
@@ -93,6 +98,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    failedLoginAttempts: {
+      type: Number,
+      default: 0,
+    },
+    lockedUntil: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -112,7 +125,7 @@ const userSchema = new mongoose.Schema(
 
 userSchema.index({ email: 1, username: 1 });
 
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
   if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordChangedAt = Date.now() - 1000;
@@ -128,6 +141,37 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
     return JWTTimestamp < changedTimestamp;
   }
   return false;
+};
+
+userSchema.methods.isLocked = function () {
+  return this.lockedUntil && this.lockedUntil > Date.now();
+};
+
+userSchema.methods.incrementLoginAttempts = async function () {
+  // If lock has expired, reset attempts and remove lock
+  if (this.lockedUntil && this.lockedUntil < Date.now()) {
+    return this.updateOne({
+      $set: { failedLoginAttempts: 1 },
+      $unset: { lockedUntil: 1 },
+    });
+  }
+  
+  // Otherwise, increment attempts
+  const updates = { $inc: { failedLoginAttempts: 1 } };
+  
+  // Lock account after 5 failed attempts for 15 minutes
+  if (this.failedLoginAttempts + 1 >= 5 && !this.isLocked()) {
+    updates.$set = { lockedUntil: Date.now() + 15 * 60 * 1000 };
+  }
+  
+  return this.updateOne(updates);
+};
+
+userSchema.methods.resetLoginAttempts = async function () {
+  return this.updateOne({
+    $set: { failedLoginAttempts: 0 },
+    $unset: { lockedUntil: 1 },
+  });
 };
 
 module.exports = mongoose.model('User', userSchema);

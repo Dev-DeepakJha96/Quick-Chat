@@ -30,7 +30,7 @@ const config = {
 
   server: {
     port: parseInt(process.env.PORT, 10) || 5000,
-    host: process.env.HOST,
+    host: process.env.HOST || 'localhost',
     clientUrls: process.env.CLIENT_URL.split(',').map((url) => url.trim()),
   },
 

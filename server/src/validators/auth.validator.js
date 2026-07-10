@@ -81,7 +81,9 @@ const updateMeSchema = z.object({
     .string()
     .regex(/^#[0-9a-fA-F]{6}$/, 'Avatar color must be a valid hex color')
     .optional(),
+  avatar: z.string().optional().nullable(),
 });
+
 
 const changePasswordSchema = z
   .object({
