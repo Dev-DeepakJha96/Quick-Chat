@@ -41,7 +41,7 @@ exports.registerUser = async ({ username, email, password }) => {
   logger.info(`User created: ${email}`);
 
   // Fire-and-forget email — user creation already succeeded
-  sendEmail({
+   sendEmail({
     to: email,
     subject: 'Verify Your Email',
     html: emailVerificationTemplate(rawToken),
