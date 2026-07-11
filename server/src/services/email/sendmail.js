@@ -3,7 +3,13 @@ const env = require("../../config/env.config.js");
 const logger = require("../../config/logger.config")
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  family: 4,
+  tls: {
+    rejectUnauthorized: false,
+  },
   auth: {
     user: env.email.emailUser,
     pass: env.email.emailPass,
