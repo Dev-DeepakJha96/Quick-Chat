@@ -137,7 +137,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0F172A] text-slate-800 dark:text-slate-100 flex items-center justify-center p-4 transition-colors duration-200">
+    <div className="min-h-dvh w-full overflow-y-auto bg-slate-50 dark:bg-[#0F172A] text-slate-800 dark:text-slate-100 flex items-center justify-center p-4 transition-colors duration-200">
       {/* Background decoration */}
       <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />

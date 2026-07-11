@@ -7,7 +7,7 @@ const Home = () => {
   const { activeConversation, selectConversation } = useChat();
 
   return (
-    <div className="h-screen w-screen flex bg-slate-950 overflow-hidden text-slate-100 font-sans relative">
+    <div className="h-dvh w-screen flex bg-slate-950 overflow-hidden text-slate-100 font-sans relative">
       {/* Sidebar container (30% desktop, full screen mobile if no active conversation) */}
       <div
         className={`h-full border-r border-slate-800/50 shrink-0 w-full md:w-[320px] lg:w-[380px] transition-all duration-300 ${
