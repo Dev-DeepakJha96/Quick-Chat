@@ -392,7 +392,7 @@ const ChatWindow = () => {
                     Replying to @{replyingMessage.sender?.username}
                   </p>
                   <p className="text-slate-650 dark:text-slate-300 truncate">
-                    {replyingMessage.text?.startsWith('/uploads/') ? 'Attachment file' : replyingMessage.text}
+                    {replyingMessage.text?.startsWith('/uploads/') || replyingMessage.text?.includes('res.cloudinary.com') || replyingMessage.text?.includes('/uploads/') ? 'Attachment file' : replyingMessage.text}
                   </p>
                 </div>
                 <button

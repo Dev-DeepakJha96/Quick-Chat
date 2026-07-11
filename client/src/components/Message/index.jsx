@@ -47,7 +47,7 @@ const MessageBubble = ({
 
   // Check if message is a file/image URL or contains attachments
   const hasAttachments = msg.attachments && msg.attachments.length > 0;
-  const isUpload = msg.text?.startsWith('/uploads/') || hasAttachments;
+  const isUpload = msg.text?.startsWith('/uploads/') || msg.text?.includes('res.cloudinary.com') || msg.text?.includes('/uploads/') || hasAttachments;
 
   // Group reactions: { emoji: { count, users: [], hasReacted } }
   const groupedReactions = reactions.reduce((acc, curr) => {

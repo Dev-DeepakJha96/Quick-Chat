@@ -242,7 +242,7 @@ const Sidebar = ({ onMobileClose }) => {
                       messageSnippet = 'This message was deleted';
                     } else if (lastMessage.text) {
                       // Check if message is a file upload
-                      if (lastMessage.text.startsWith('/uploads/')) {
+                      if (lastMessage.text.startsWith('/uploads/') || lastMessage.text.includes('res.cloudinary.com') || lastMessage.text.includes('/uploads/')) {
                         messageSnippet = isOwnLastMessage ? 'Sent a file' : 'Sent a file';
                       } else {
                         messageSnippet = lastMessage.text;
